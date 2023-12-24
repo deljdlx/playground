@@ -1,8 +1,47 @@
 console.log('%cbootstrap.js :: 1 =============================', 'color: #f00; font-size: 1rem');
 
-const size = 40;
-const matrix = new Matrix(size, size);
-matrix.randomize(0.25);
+
+function test(size, start, end) {
+
+  const matrix = new Matrix(size, size);
+  matrix.randomize(0.25);
+
+  matrix.render(document.querySelector('#matrix'));
+
+  console.log(end);
+
+  const startTime = new Date().getTime();
+  const path = matrix.findPath(start[0], start[1], end[0], end[1]);
+  const endTime = new Date().getTime();
+
+  console.log(`Time: ${endTime - startTime}ms`);
+
+  for(let step of path) {
+    matrix.renderer.getCell(step.row, step.col).style.backgroundColor = '#0f0';
+  }
+
+  console.log('%cbootstrap.js :: 15 =============================', 'color: #f00; font-size: 1rem');
+  console.log(path);
+}
+
+
+const size = 60;
+
+document.querySelector('#start-input').value=`0,0`;
+document.querySelector('#end-input').value=`${size-1},${size-1}`;
+
+document.querySelector('#trigger-regenerate').addEventListener('click', () => {
+  const start = document.querySelector('#start-input').value.split(',').map((value) => parseInt(value));
+  const end = document.querySelector('#end-input').value.split(',').map((value) => parseInt(value));
+  test(size, start, end);
+});
+
+
+const start = document.querySelector('#start-input').value.split(',').map((value) => parseInt(value));
+const end = document.querySelector('#end-input').value.split(',').map((value) => parseInt(value));
+
+test(size, start, end);
+
 
 // matrix.setCell(1, 3, 1);
 // matrix.setCell(1, 4, 1);
@@ -30,14 +69,3 @@ matrix.randomize(0.25);
 // matrix.setCell(8, 4, 1);
 
 
-matrix.render(document.body);
-
-
-const path = matrix.findPath(0, 0, size-1, size-1);
-
-for(let step of path) {
-  matrix.renderer.getCell(step.row, step.col).style.backgroundColor = '#0f0';
-}
-
-console.log('%cbootstrap.js :: 15 =============================', 'color: #f00; font-size: 1rem');
-console.log(path);

@@ -1,16 +1,3 @@
-class PathStep {
-  constructor(row, col, previous) {
-    this.row = row;
-    this.col = col;
-    this.previous = previous;
-
-    this.topChecked = false;
-    this.rightChecked = false;
-    this.bottomChecked = false;
-    this.leftChecked = false;
-  }
-}
-
 class Matrix
 {
 
@@ -39,19 +26,13 @@ class Matrix
 
 
   findPath(startRow, startCol, endRow, endCol) {
-    const path = [];
-    let currentStep = new PathStep(startRow, startCol, null);
-    const visited = [];
-    path.push(currentStep);
-    visited.push(currentStep);
+    this.open = [];
+    this.closed = [];
 
+    let currentStep = new PathStep(startRow, startCol, null);
 
     this.open.push(currentStep);
     this.closed.push(`${startRow}-${startCol}`);
-
-
-    const open = [];
-
 
     const neighbors = {
       left: [0, -1],
@@ -65,53 +46,42 @@ class Matrix
     for(let step of this.open) {
       for(let direction in neighbors) {
         if(max < 0) {
-          console.log(this.open);
-          return;
+          console.log('Path not found');
+          return [];
         }
+
         const nextRow = step.row + neighbors[direction][0];
         const nextCol = step.col + neighbors[direction][1];
-
-        if(nextRow === endRow && nextCol === endCol) {
-          console.log('%cMatrix.js :: 73 =============================', 'color: #f00; font-size: 2rem');
-          console.log("ICI");
-
-          const steps = [];
-          const lastStep = new PathStep(nextRow, nextCol, step);
-          steps.push(lastStep);
-          steps.push(step);
-          while(step.previous !== null) {
-            steps.push(step.previous);
-            step = step.previous;
-          }
-
-          console.log(step);
-          console.log(steps);
-
-          console.log('found');
-          console.log(max);
-          return steps.reverse();
-        }
-
         const key = `${nextRow}-${nextCol}`;
 
-
-        if(this.closed.includes(key)) {
-          console.log('locked');
-          continue;
-        }
-
-        this.closed.push(key);
-
-        console.log(nextRow, nextCol);
-
         if(nextRow < 0 || nextRow >= this.cells.length) {
-          console.log('out of bounds');
+          // console.log('out of bounds');
           continue;
         }
         if(nextCol < 0 || nextCol >= this.cells[nextRow].length) {
-          console.log('out of bounds');
+          // console.log('out of bounds');
           continue;
         }
+
+        if(nextRow === endRow && nextCol === endCol) {
+          const lastStep = new PathStep(nextRow, nextCol, step);
+          // console.log('Path found');
+
+          return this.getPath(lastStep);
+        }
+
+        if(this.closed.includes(key)) {
+          // console.log('locked');
+          continue;
+        }
+
+        if(this.open.includes(key)) {
+          // console.log('already visited');
+          continue;
+        }
+
+        // lock current cell
+        this.closed.push(key);
 
         if(this.cells[nextRow][nextCol].isWall()) {
           console.log('wall');
@@ -122,20 +92,25 @@ class Matrix
 
         const nextStep = new PathStep(nextRow, nextCol, step);
 
-        if(visited.includes(key)) {
-          console.log('already visited');
-          continue;
-        }
-        visited.push(key);
+        // path not blocked, so add to open list
         this.open.push(nextStep);
-
-        // this.renderer.getCell(nextRow, nextCol).style.backgroundColor = 'red';
-        this.renderer.getCell(nextRow, nextCol).classList.add('visited');
+        // this.renderer.getCell(nextRow, nextCol).classList.add('visited');
       }
     }
 
-    console.log(this.open);
+    console.log('Path not found');
+    return [];
+  }
 
+  getPath(step) {
+    const steps = [];
+    steps.push(step);
+    while(step.previous !== null) {
+      steps.push(step.previous);
+      step = step.previous;
+    }
+
+    return steps.reverse();
   }
 
   render(container) {

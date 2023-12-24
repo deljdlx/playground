@@ -11,6 +11,7 @@
 .cell {
   position: absolute;
   border: solid 1px #000;
+  background-color: #aaa;
   display: block;
   text-align: center;
 }
