@@ -6,13 +6,18 @@ class Matrix
   open = [];
   closed = [];
 
+  cellSize = 20;
+
   /** @param {MatrixRenderer} matrixRenderer */
   renderer;
 
 
-  constructor(rows, cols) {
+  constructor(rows, cols, cellSize) {
     this.rows = rows;
     this.cols = cols;
+    this.cellSize = cellSize;
+
+
     for(let row = 0; row < rows; row++) {
       this.cells[row] = [];
       for(let col = 0; col < cols; col++) {
@@ -20,7 +25,7 @@ class Matrix
       }
     }
 
-    this.renderer = new MatrixRenderer(this, 20);
+    this.renderer = new MatrixRenderer(this, cellSize);
   }
 
 

@@ -23,7 +23,11 @@ class MatrixRenderer
   render(container) {
     container.innerHTML = '';
 
-    container.classList.add('matrix-container');
+
+    const matrixContainer = document.createElement('div');
+    matrixContainer.classList.add('matrix-container');
+    matrixContainer.style.width = `${this.matrix.cols * this.cellSize}px`;
+    matrixContainer.style.height = `${this.matrix.rows * this.cellSize}px`;
 
     for(let row = 0; row < this.matrix.cells.length; row++) {
       for(let col = 0; col < this.matrix.cells[row].length; col++) {
@@ -42,10 +46,11 @@ class MatrixRenderer
           cell.classList.add('wall');
         }
         // cell.innerHTML = `${row}, ${col}`;
-        container.appendChild(cell);
+        matrixContainer.appendChild(cell);
       }
-      container.appendChild(document.createElement('br'));
+      matrixContainer.appendChild(document.createElement('br'));
     }
+    container.appendChild(matrixContainer);
   }
 
   getCell(row, col) {
